@@ -1,20 +1,28 @@
 package com.example.androidbluetooth.ui.dashboard
 
+import android.Manifest
+import android.app.Activity.RESULT_OK
 import android.bluetooth.BluetoothAdapter
+import android.content.Intent
+import android.os.Build
+
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
+
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.androidbluetooth.databinding.FragmentDashboardBinding
-import javax.security.auth.login.LoginException
+
 
 class DashboardFragment : Fragment() {
 
     private val TAG = "DashboardFragment"
+    private val REQUEST_ENABLE_BT = 1
 
     private var _binding: FragmentDashboardBinding? = null
 
@@ -27,6 +35,20 @@ class DashboardFragment : Fragment() {
     val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
     //**********
 
+    private var requestBluetooth = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            //granted
+        }else{
+            //deny
+        }
+    }
+
+    private val requestMultiplePermissions =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            permissions.entries.forEach {
+                Log.d("test006", "${it.key} = ${it.value}")
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,7 +66,33 @@ class DashboardFragment : Fragment() {
             textView.text = it
         }
 
+        /**
+        * Pidiendo permisos en tiempo de ejecución
+        * */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            requestMultiplePermissions.launch(arrayOf(
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_CONNECT))
+        }
+        else{
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            requestBluetooth.launch(enableBtIntent)
+        }
+        /***/
 
+
+        /**
+         * Activando el Bluetooth si esta desactivado
+         */
+        if (bluetoothAdapter?.isEnabled == false) {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+        }
+
+
+        /**
+         * Comprobando si el dispositivo es compatible con bluetooth
+         */
         if (bluetoothAdapter == null) {
             // Device doesn't support Bluetooth
             Log.i(TAG, "El dispositivo no es compatible con bluetooth ")
