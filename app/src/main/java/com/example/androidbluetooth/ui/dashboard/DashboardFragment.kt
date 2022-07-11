@@ -102,6 +102,9 @@ class DashboardFragment : Fragment() {
             Log.i(TAG, "Compatible ")
         }
 
+
+        val nfc = NfcAdapter.getDefaultAdapter(context)
+
         return root
     }
 
