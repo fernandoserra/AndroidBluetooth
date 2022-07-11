@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 
 import androidx.fragment.app.Fragment
@@ -104,6 +105,15 @@ class DashboardFragment : Fragment() {
 
 
         val nfc = NfcAdapter.getDefaultAdapter(context)
+
+        binding.button.setOnClickListener {
+
+            if (nfc != null && nfc.isEnabled){
+                Toast.makeText(context, "NFC Disponible", Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(context, "NFC No disponible", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         return root
     }
