@@ -5,6 +5,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.nfc.NfcAdapter
+import android.nfc.Tag
+import android.nfc.tech.IsoDep
 import android.os.Bundle
 import android.util.Log
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -74,6 +77,20 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        Log.i(TAG, "Ejecutando onNewIntent:")
+
+        /*if (NfcAdapter.ACTION_TECH_DISCOVERED == intent?.action) {
+            val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
+            IsoDep.get(tag)?.let { isoDepTag ->
+                // Handle the tag here
+                Log.i(TAG, "onNewIntent: $isoDepTag")
+            }
+        }*/
     }
 
     override fun onDestroy() {
